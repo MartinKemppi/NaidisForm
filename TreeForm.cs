@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,25 +11,29 @@ namespace NaidisForm
     public partial class TreeForm : Form
     {
         TreeView tree;
-        Button btn;
+        Button btn, btn1;
         Label lbl, lbl1;
-        TextBox txt_box;
+        TextBox txt_box, txt_box1;
         RadioButton r1, r2;
         CheckBox c1, c2;
         PictureBox pb;
+        ListBox lb;
 
         bool isBTNVIS = false;
+        bool isBTN1VIS = false;
         bool isLBLVIS = false;
         bool isTXTBOXVIS = false;
         bool isRADIOVIS = false;
         bool isCHCVIS = false;
         bool isPBVIS = false;
         bool isLBL1VIS = false;
+        bool isLBVIS = false;
+        bool isTXTBOX1VIS = false;
 
         public TreeForm()
         {
-            this.Height = 600;
-            this.Width = 800;
+            this.Height = 720;
+            this.Width = 1280;
             this.Text = "Vorm põhielementidega";
             tree = new TreeView();
             tree.Dock = DockStyle.Left;
@@ -67,7 +73,7 @@ namespace NaidisForm
             txt_box.Height = 50;
             txt_box.Width = 100;
             txt_box.Text = "...";
-            txt_box.Location = new Point(tree.Width, btn.Top + btn.Height);
+            txt_box.Location = new Point(tree.Width, btn.Top + btn.Height);           
             //Radiobutton
             treeNode.Nodes.Add(new TreeNode("Radionupp-Radiobutton"));
             r1= new RadioButton();
@@ -92,6 +98,44 @@ namespace NaidisForm
             pb.Size = new Size(100,100);
             pb.SizeMode = PictureBoxSizeMode.Zoom;
             pb.BorderStyle= BorderStyle.Fixed3D;
+            //Loetelu
+            treeNode.Nodes.Add(new TreeNode("ListBoxnupp-ListBox"));
+            lb = new ListBox();
+            lb.Items.Add("Roheline");
+            lb.Items.Add("Sinine");
+            lb.Items.Add("Hall");
+            lb.Items.Add("Kollane");
+            lb.Location = new Point(tree.Width, pb.Location.Y + pb.Height);
+            this.Controls.Add(lb);
+            //Tekstkast1
+            treeNode.Nodes.Add(new TreeNode("Tekstkast_ListboxLisamisele-Textbox"));
+            txt_box1 = new TextBox();
+            txt_box1.BorderStyle = BorderStyle.Fixed3D;
+            txt_box1.Height = 50;
+            txt_box1.Width = 100;
+            txt_box1.Text = "...";
+            txt_box1.Location = new Point(tree.Width, lb.Location.Y + lb.Height);
+            //Button1
+            treeNode.Nodes.Add(new TreeNode("Nupp-Button1"));
+            btn1 = new Button();
+            btn1.Height = 50;
+            btn1.Width = 80;
+            btn1.Text = "Kustuta";
+            btn1.Location = new Point(tree.Width, txt_box1.Location.Y + txt_box1.Height);
+            btn1.Click += Btn_Click1;
+            //Data
+            treeNode.Nodes.Add(new TreeNode("DataGridView"));
+            DataSet ds = new DataSet("XML fail. Menyy");
+            ds.ReadXml(@"..\..\..\breakfast.xml");
+            DataGridView dg = new DataGridView();
+            dg.Location = new Point(tree.Width + pb.Width + 50, pb.Location.Y);
+            //dg.Height = 200;
+            //dg.Width = 820;
+            dg.DataSource = ds;
+            dg.AutoGenerateColumns= true;
+            dg.DataMember= "food";
+            dg.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dg.AutoSize = true;
 
             btn.Visible = false;
             lbl.Visible = false;
@@ -102,6 +146,9 @@ namespace NaidisForm
             c2.Visible = false;
             pb.Visible = false;
             lbl1.Visible = false;
+            lb.Visible = false;
+            txt_box1.Visible = false;
+            btn1.Visible = false;
 
             tree.Nodes.Add(treeNode);
             this.Controls.Add(lbl);
@@ -114,6 +161,9 @@ namespace NaidisForm
             this.Controls.Add(c1);
             this.Controls.Add(c2);
             this.Controls.Add(pb);
+            this.Controls.Add(txt_box1);
+            this.Controls.Add(btn1);
+            this.Controls.Add(dg);
 
             r1.CheckedChanged += new EventHandler(RadioButtons_Changed);
             r2.CheckedChanged += new EventHandler(RadioButtons_Changed);
@@ -122,6 +172,7 @@ namespace NaidisForm
             c2.CheckedChanged += new EventHandler(CheckboxButtons_Changed);
 
             txt_box.KeyDown += new KeyEventHandler(Txt_box_KeyDown);
+            txt_box1.KeyDown += new KeyEventHandler(Txt_box1_KeyDown);
         }
 
         private void Txt_box_KeyDown(object? sender, KeyEventArgs e)
@@ -135,7 +186,43 @@ namespace NaidisForm
                     isLBL1VIS = !isLBL1VIS;
                     lbl1.Visible = isBTNVIS;
                     lbl1.Text = txt_box.Text;
-                }                
+                } 
+                else
+                {
+                    string tekst = Interaction.InputBox("Sisesta pealkiri", "Pealkiri Muutmine", "Uus pealkiri");
+                    if (tekst.Length > 0)
+                    {
+                        txt_box.Enabled = false;
+                        isLBL1VIS = !isLBL1VIS;
+                        lbl1.Visible = isBTNVIS;
+                        lbl1.Text = txt_box.Text;
+                    }
+                }
+            }
+        }
+
+        private void Txt_box1_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                DialogResult result = MessageBox.Show("Kas sa oled kindel?", "Küsimus", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes && !lb.Items.Contains(result))
+                {
+                    lb.Items.Add(txt_box1.Text);
+                }
+                else if(result == DialogResult.No)
+                {
+                    txt_box1.Text = null;
+                }                                   
+                else
+                {
+                    string tekst = Interaction.InputBox("Sisesta pealkiri", "Pealkiri Muutmine", "Uus pealkiri");
+                    if (tekst.Length > 0 && !lb.Items.Contains(tekst))
+                    {
+                        lb.Items.Add(txt_box1.Text);
+                    }
+                }
             }
         }
 
@@ -155,6 +242,14 @@ namespace NaidisForm
                 this.ForeColor = Color.White;
                 btn.ForeColor = Color.White;
                 lbl.ForeColor = Color.Black;
+            }
+        }
+
+        private void Btn_Click1(object? sender, EventArgs e)
+        {
+            if (lb.SelectedItem != null)
+            {
+                lb.Items.Remove(lb.SelectedItem);
             }
         }
 
@@ -220,6 +315,25 @@ namespace NaidisForm
                 isPBVIS = !isPBVIS;
                 pb.Visible = isPBVIS;
             }
+            else if (e.Node.Text == "ListBoxnupp-ListBox")
+            {
+                tree.SelectedNode = null;
+                isLBVIS = !isLBVIS;
+                lb.Visible = isLBVIS;
+            }
+            else if (e.Node.Text == "Tekstkast_ListboxLisamisele-Textbox")
+            {
+                tree.SelectedNode = null;
+                isTXTBOX1VIS = !isTXTBOX1VIS;
+                txt_box1.Visible = isTXTBOX1VIS;
+            }
+            if (e.Node.Text == "Nupp-Button1")
+            {
+                tree.SelectedNode = null;
+                isBTN1VIS = !isBTN1VIS;
+                btn1.Visible = isBTN1VIS;
+
+            }          
         }
 
         private void Btn_Click(object? sender, EventArgs e)
