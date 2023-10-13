@@ -137,6 +137,9 @@ namespace NaidisForm
             dg.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dg.AutoSize = true;
 
+            treeNode.Nodes.Add(new TreeNode("Kolmnurk"));
+
+
             btn.Visible = false;
             lbl.Visible = false;
             txt_box.Visible = false;
@@ -333,12 +336,17 @@ namespace NaidisForm
                 isBTN1VIS = !isBTN1VIS;
                 btn1.Visible = isBTN1VIS;
 
-            }          
+            }
+            if (e.Node.Text == "Kolmnurk")
+            {
+                tree.SelectedNode = null;
+                TForm form = new TForm();
+                form.Show(); // or form.ShowDialog(this);
+            }           
         }
 
         private void Btn_Click(object? sender, EventArgs e)
         {            
-
             if(btn.BackColor == Color.Aqua)
             {
                 btn.BackColor = Color.Crimson;
