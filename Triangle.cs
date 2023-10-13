@@ -16,7 +16,6 @@ public class Triangle
         b = B;
         c = C;
     }
-
     public string outputA()
     {
         return Convert.ToString(a);
@@ -42,6 +41,17 @@ public class Triangle
         p = (a + b + c) / 2;
         s = Math.Sqrt((p * (p - a) * (p - b) * (p - c)));
         return s;
+    }
+    public double Height()
+    {
+        double s = Surface();
+        double h = 2 * s / a;
+        return h;
+    }
+    public double Median()
+    {
+        double m = a / 2;
+        return m;
     }
     public double GetSetA
     {
