@@ -9,7 +9,6 @@ public class Triangle
     public double a;
     public double b;
     public double c;
-
     public Triangle(double A, double B, double C)
     {
         a = A;
