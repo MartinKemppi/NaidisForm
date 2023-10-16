@@ -23,11 +23,10 @@ namespace NaidisForm
             this.Height = 720;
             this.Width = 1280;
 
-            // Initialize ListView
             listView1 = new ListView();
             listView1.View = View.Details;
-            listView1.Columns.Add("Attribute", 150, HorizontalAlignment.Left);
-            listView1.Columns.Add("Value", -2, HorizontalAlignment.Left);
+            listView1.Columns.Add("Tüübid", 150, HorizontalAlignment.Left);
+            listView1.Columns.Add("Andmed", -2, HorizontalAlignment.Left);
 
             listView1.Height = 250;
             listView1.Width = 350;
@@ -137,6 +136,7 @@ namespace NaidisForm
                 MessageBox.Show("Palun sisestage õiged andmed kolmkurkadele");
             }
         }
+
         private void AddListViewItem(string attribute, string value)
         {
             ListViewItem item = new ListViewItem(attribute);
