@@ -1,103 +1,154 @@
+using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
 namespace NaidisForm
 {
     public partial class TForm : Form
     {
-        private TextBox txtA;
-        private TextBox txtB;
-        private TextBox txtC;
-
-        private int scaledSideA;
-        private int scaledSideB;
-        private int scaledSideC;
+        ListView listView1;
+        TextBox txtA, txtB, txtC;
+        Button btn1, clearBtn;
+        PictureBox pictureBox1;
+        Graphics graphics;
+        Pen pen;
 
         public TForm()
         {
-            this.Height = 800;
-            this.Width = 600;
+            this.Height = 720;
+            this.Width = 1280;
 
-            //Triangle t = new Triangle(3, 3, 3);
-            //double P = t.Perimeter();
-            //double S = t.Surface();
+            // Initialize ListView
+            listView1 = new ListView();
+            listView1.View = View.Details;
+            listView1.Columns.Add("Attribute", 150, HorizontalAlignment.Left);
+            listView1.Columns.Add("Value", -2, HorizontalAlignment.Left);
 
-            //TextboxA
+            listView1.Height = 250;
+            listView1.Width = 350;
+            listView1.Location = new Point(50, 250);
+
+            // Button
+            btn1 = new Button();
+            btn1.Height = 72;
+            btn1.Width = 50;
+            btn1.Text = "Click";
+            btn1.Location = new Point(150, 50);
+            btn1.Click += Run_button_Click;
+
+            // TextBox A
             txtA = new TextBox();
+            txtA.BorderStyle = BorderStyle.Fixed3D;
+            txtA.Height = 50;
+            txtA.Width = 100;
             txtA.Location = new Point(50, 50);
-            txtA.Size = new Size(100, 20);
-            txtA.Text = "A";
-            //TextboxB
+            txtA.PlaceholderText = "Sisesta A külje";
+
+            // TextBox B
             txtB = new TextBox();
-            txtB.Location = new Point(50, 80);
-            txtB.Size = new Size(100, 20);
-            txtB.Text = "B";
-            //TextboxC
+            txtB.BorderStyle = BorderStyle.Fixed3D;
+            txtB.Height = 50;
+            txtB.Width = 100;
+            txtB.Location = new Point(50,txtA.Location.Y + txtA.Height);
+            txtB.PlaceholderText = "Sisesta B külje";
+
+            // TextBox C
             txtC = new TextBox();
-            txtC.Location = new Point(50, 110);
-            txtC.Size = new Size(100, 20);
-            txtC.Text = "C";
-            //Button
-            Button drawButton = new Button();
-            drawButton.Text = "Kolmnurk";
-            drawButton.Location = new Point(50, 140);
-                        
+            txtC.BorderStyle = BorderStyle.Fixed3D;
+            txtC.Height = 50;
+            txtC.Width = 100;
+            txtC.Location = new Point(50, txtB.Location.Y + txtB.Height);
+            txtC.PlaceholderText = "Sisesta C külje";
+
+            // Clear Button
+            clearBtn = new Button();
+            clearBtn.Height = 72;
+            clearBtn.Width = 50;
+            clearBtn.Text = "Clear";
+            clearBtn.Location = new Point(btn1.Location.X + btn1.Width, btn1.Top);
+            clearBtn.Click += ClearButton_Click;
+
+            this.Controls.Add(btn1);
+            this.Controls.Add(clearBtn);
             this.Controls.Add(txtA);
             this.Controls.Add(txtB);
             this.Controls.Add(txtC);
-            this.Controls.Add(drawButton);
-
-            drawButton.Click += DrawButton_Click;
-            this.Paint += TForm_Paint;
+            this.Controls.Add(listView1);
+            this.Controls.Add(pictureBox1);
         }
 
-        private void DrawButton_Click(object sender, EventArgs e)
+        private void Run_button_Click(object sender, EventArgs e)
         {
-            //Textbox -> Int a,b,c
-            if (double.TryParse(txtA.Text, out double sideA) &&
-                double.TryParse(txtB.Text, out double sideB) &&
-                double.TryParse(txtC.Text, out double sideC))
-            {
-                // Int a,b,c * 10px joonistamiseks
-                const int ScaleFactor = 10;
-                scaledSideA = (int)(sideA * ScaleFactor);
-                scaledSideB = (int)(sideB * ScaleFactor);
-                scaledSideC = (int)(sideC * ScaleFactor);
+            double a, b, c;
+            a = Convert.ToDouble(txtA.Text);
+            b = Convert.ToDouble(txtB.Text);
+            c = Convert.ToDouble(txtC.Text);
 
-                // Kontroll: abc sisestatud && a || b || c  1 suurem 
-                Triangle triangle = new Triangle(sideA, sideB, sideC);
-                if (triangle.ExistTriangle)
+            Triangle triangle = new Triangle(a, b, c);
+            AddListViewItem("A külg", triangle.outputA());
+            AddListViewItem("B külg", triangle.outputB());
+            AddListViewItem("C külg", triangle.outputC());
+            AddListViewItem("Ümbermõõt", triangle.Perimeter().ToString());
+            AddListViewItem("Pindala", triangle.Surface().ToString());
+            AddListViewItem("Mediaan", triangle.Median().ToString());
+            AddListViewItem("Kõrgus", triangle.Height().ToString());
+            AddListViewItem("Joonistatud?", triangle.ExistTriangle ? "Jah" : "Ei");
+            AddListViewItem("Tüüp", triangle.CheckTriangleType());            
+
+            double pointA, pointB, pointC;
+            if (double.TryParse(txtA.Text, out pointA) && double.TryParse(txtB.Text, out pointB) && double.TryParse(txtC.Text, out pointC))
+            {
+                if (pointA + pointB > pointC && pointA + pointC > pointB && pointB + pointC > pointA)
                 {
-                    // Kehtestab juhtelemendi kindla ala ja põhjustab juhtelemendile loosimisteate saatmise.
-                    this.Invalidate();
+                    double centerX = 500;
+                    double centerY = 250;
+
+                    double angleA = 0;
+                    double angleB = Math.Acos((pointA * pointA + pointC * pointC - pointB * pointB) / (2 * pointA * pointC));
+                    double angleC = Math.Acos((pointA * pointA + pointB * pointB - pointC * pointC) / (2 * pointA * pointB));
+
+                    double xA = centerX + pointA * Math.Cos(angleA);
+                    double yA = centerY - pointA * Math.Sin(angleA);
+
+                    double xB = centerX + pointB * Math.Cos(Math.PI - angleB);
+                    double yB = centerY - pointB * Math.Sin(Math.PI - angleB);
+
+                    double xC = centerX + pointC * Math.Cos(Math.PI - angleC);
+                    double yC = centerY - pointC * Math.Sin(Math.PI - angleC);
+
+                    graphics = CreateGraphics();
+                    pen = new Pen(Color.Black);
+                    graphics.DrawLine(pen, (float)xA, (float)yA, (float)xB, (float)yB);
+                    graphics.DrawLine(pen, (float)xB, (float)yB, (float)xC, (float)yC);
+                    graphics.DrawLine(pen, (float)xC, (float)yC, (float)xA, (float)yA);
                 }
                 else
                 {
-                    MessageBox.Show("Valed kolmnurkade küljed. Palun sisesta õige küljete suurused."); 
+                    MessageBox.Show("Sisestatud andmetega pole sellist kolmnurka");
                 }
             }
             else
             {
-                MessageBox.Show("Vale sisestatud info. Palun sisestage numbrid küljedele.");
+                MessageBox.Show("Palun sisestage õiged andmed kolmkurkadele");
             }
         }
-
-        private void TForm_Paint(object sender, PaintEventArgs e)
+        private void AddListViewItem(string attribute, string value)
         {
-            // Kontroll: suurem kui 0
-            if (scaledSideA > 0 && scaledSideB > 0 && scaledSideC > 0)
+            ListViewItem item = new ListViewItem(attribute);
+            item.SubItems.Add(value);
+            listView1.Items.Add(item);
+        }
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.Items.Count > 0)
             {
-                Graphics g = e.Graphics;
-                Pen pen = new Pen(Color.Black, 2);
-
-                Point vertex1 = new Point(200, 200);
-                Point vertex2 = new Point(200 + scaledSideA, 200);
-                Point vertex3 = new Point(200 + scaledSideA / 2, 200 - scaledSideC);
-
-                // Joonistame kolmnurka
-                g.DrawLine(pen, vertex1, vertex2);
-                g.DrawLine(pen, vertex2, vertex3);
-                g.DrawLine(pen, vertex3, vertex1);
-
-                pen.Dispose();
-                g.Dispose();
+                listView1.Items.Clear();
+                Invalidate();
             }
         }
     }

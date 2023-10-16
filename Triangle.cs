@@ -35,11 +35,11 @@ public class Triangle
     }
     public double Surface()
     {
-        double s = 0;
+        //double s = 0;
         double p = 0;
         p = (a + b + c) / 2;
-        s = Math.Sqrt((p * (p - a) * (p - b) * (p - c)));
-        return s;
+        //s = Math.Sqrt((p * (p - a) * (p - b) * (p - c)));
+        return Math.Sqrt((p * (p - a) * (p - b) * (p - c)));
     }
     public double Height()
     {
@@ -71,9 +71,43 @@ public class Triangle
     {
         get
         {
-            if ((a + b > c) && (a + c > b) && (b + c > a))
+            if ((a + b < c) && (a + c < b) && (b + c < a))
                 return false;
                 else return true;
+        }
+    }
+    public string CheckTriangleType()
+    {
+        if (ExistTriangle)
+        {
+            if (a == b && b == c)
+            {
+                return "Võrdkülgne kolmnurk";
+            }
+            else if (a == b || b == c || a == c)
+            {
+                if (Math.Pow(a, 2) + Math.Pow(b, 2) == Math.Pow(c, 2) ||
+                    Math.Pow(b, 2) + Math.Pow(c, 2) == Math.Pow(a, 2) ||
+                    Math.Pow(a, 2) + Math.Pow(c, 2) == Math.Pow(b, 2))
+                {
+                    return "Võrdhaarne täisnurkne kolmnurk";
+                }
+                return "Võrdhaarne kolmnurk";
+            }
+            else
+            {
+                if (Math.Pow(a, 2) + Math.Pow(b, 2) == Math.Pow(c, 2) ||
+                    Math.Pow(b, 2) + Math.Pow(c, 2) == Math.Pow(a, 2) ||
+                    Math.Pow(a, 2) + Math.Pow(c, 2) == Math.Pow(b, 2))
+                {
+                    return "Skaleeni täisnurkne kolmnurk";
+                }
+                return "Skaleeni kolmnurk";
+            }
+        }
+        else
+        {
+            return "Kehtetu kolmnurk";
         }
     }
 }     
