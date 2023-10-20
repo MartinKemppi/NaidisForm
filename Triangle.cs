@@ -67,6 +67,11 @@ public class Triangle
         get { return c; }
         set {c = value; }
     }
+    public double GetKolm()
+    {
+        double c = Math.Sqrt(a * a + b * b);
+        return c;
+    }
     public bool ExistTriangle
     {
         get

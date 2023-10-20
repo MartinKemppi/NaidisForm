@@ -9,25 +9,26 @@ using System.Windows.Forms;
 
 namespace NaidisForm
 {
-    public partial class TForm : Form
+    public partial class KolmnurkForm : Form
     {
+        Label lbl;
         ListView listView1;
-        TextBox txtA, txtB, txtC;
-        Button btn1, btn2, clearBtn, Ebtn;
+        TextBox txtA, txtB, txtC, txtK1, txtK2;
+        Button btn1, clearBtn, Ebtn, btnAA;
         PictureBox pictureBox1;
         Graphics graphics;
         Pen pen;
 
-        public TForm()
+        public KolmnurkForm()
         {
             this.Height = 720;
             this.Width = 1280;
 
+            // ListView
             listView1 = new ListView();
             listView1.View = View.Details;
             listView1.Columns.Add("Tüübid", 150, HorizontalAlignment.Left);
             listView1.Columns.Add("Andmed", -2, HorizontalAlignment.Left);
-
             listView1.Height = 250;
             listView1.Width = 350;
             listView1.Location = new Point(50, 250);
@@ -39,7 +40,17 @@ namespace NaidisForm
             btn1.Text = "Click";
             btn1.Location = new Point(150, 50);
             btn1.Click += Run_button_Click;
-          
+
+            //Label
+            lbl = new Label();
+            lbl.Text = "Kolmnurka joonistamine";
+            lbl.TextAlign = ContentAlignment.MiddleCenter;
+            lbl.Location = new Point(0, 0);
+            lbl.Size = new Size(this.Width, btn1.Location.Y);
+            lbl.BackColor = Color.White;
+            lbl.BorderStyle = BorderStyle.Fixed3D;
+            lbl.Font = new Font("Times New Roman", 24);
+
             // TextBox A
             txtA = new TextBox();
             txtA.BorderStyle = BorderStyle.Fixed3D;
@@ -64,6 +75,30 @@ namespace NaidisForm
             txtC.Location = new Point(50, txtB.Location.Y + txtB.Height);
             txtC.PlaceholderText = "Sisesta C külje";
 
+            // TextBox 1K
+            txtK1 = new TextBox();
+            txtK1.BorderStyle = BorderStyle.Fixed3D;
+            txtK1.Height = 50;
+            txtK1.Width = 150;
+            txtK1.Location = new Point(50, txtC.Location.Y + txtC.Height + 50);
+            txtK1.PlaceholderText = "Esimene külje suurus";
+
+            // TextBox 2K
+            txtK2 = new TextBox();
+            txtK2.BorderStyle = BorderStyle.Fixed3D;
+            txtK2.Height = 50;
+            txtK2.Width = 150;
+            txtK2.Location = new Point(50, txtK1.Location.Y + txtK1.Height + txtK1.Height);
+            txtK2.PlaceholderText = "Teine külje suurus";
+
+            // Arvuta Button
+            btnAA = new Button();
+            btnAA.Height = 72;
+            btnAA.Width = 50;
+            btnAA.Text = "Arvuta";
+            btnAA.Location = new Point(txtK1.Location.X + txtK1.Width, txtK1.Location.Y);
+            btnAA.Click += ArvutaButton_Click;
+
             // Clear Button
             clearBtn = new Button();
             clearBtn.Height = 72;
@@ -72,22 +107,15 @@ namespace NaidisForm
             clearBtn.Location = new Point(btn1.Location.X + btn1.Width, btn1.Top);
             clearBtn.Click += ClearButton_Click;
 
-            // Button Teisele Formile
-            btn2 = new Button();
-            btn2.Height = 72;
-            btn2.Width = 50;
-            btn2.Text = "Teine vorm";
-            btn2.Location = new Point(clearBtn.Location.X + clearBtn.Width, clearBtn.Top);
-            btn2.Click += Button2_DoubleClick;
-
             // Exit Button
             Ebtn = new Button();
             Ebtn.Height = 72;
             Ebtn.Width = 50;
             Ebtn.Text = "Välja";
-            Ebtn.Location = new Point(btn2.Location.X + btn2.Width, btn2.Top);
+            Ebtn.Location = new Point(clearBtn.Location.X + clearBtn.Width, clearBtn.Top);
             Ebtn.Click += ExitButton_Click;
 
+            this.Controls.Add(lbl);
             this.Controls.Add(btn1);
             this.Controls.Add(clearBtn);
             this.Controls.Add(txtA);
@@ -95,8 +123,12 @@ namespace NaidisForm
             this.Controls.Add(txtC);
             this.Controls.Add(listView1);
             this.Controls.Add(pictureBox1);
-            this.Controls.Add(btn2);
             this.Controls.Add(Ebtn);
+            this.Controls.Add(txtK1);
+            this.Controls.Add(txtK2);
+            this.Controls.Add(btnAA);
+
+            this.BackColor = System.Drawing.Color.Turquoise;
         }
 
         private void Run_button_Click(object sender, EventArgs e)
@@ -169,15 +201,17 @@ namespace NaidisForm
                 Invalidate();
             }
         }
-
-        private void Button2_DoubleClick(object sender, EventArgs e)
-        {
-            KolmnurkForm kolmnurkForm = new KolmnurkForm();
-                kolmnurkForm.Show();
-        }
         private void ExitButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        private void ArvutaButton_Click(object sender, EventArgs e)
+        {
+            double a, b, c;
+
+            a = Convert.ToDouble(txtK1.Text);
+            b = Convert.ToDouble(txtK2.Text);
+            c.GetKolm();
         }
     }
 }

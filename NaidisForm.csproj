@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="KolmnurkForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="TForm.cs">
       <SubType>Form</SubType>
     </Compile>
