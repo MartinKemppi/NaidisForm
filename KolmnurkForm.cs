@@ -15,7 +15,7 @@ namespace NaidisForm
         ListView listView1;
         TextBox txtA, txtB, txtC, txtK1, txtK2;
         Button btn1, clearBtn, Ebtn, btnAA;
-        PictureBox pictureBox1;
+        PictureBox pictureBox1,pb;
         Graphics graphics;
         Pen pen;
 
@@ -30,7 +30,7 @@ namespace NaidisForm
             listView1.Columns.Add("Tüübid", 150, HorizontalAlignment.Left);
             listView1.Columns.Add("Andmed", -2, HorizontalAlignment.Left);
             listView1.Height = 250;
-            listView1.Width = 350;
+            listView1.Width = 250;
             listView1.Location = new Point(50, 250);
 
             // Button
@@ -115,6 +115,14 @@ namespace NaidisForm
             Ebtn.Location = new Point(clearBtn.Location.X + clearBtn.Width, clearBtn.Top);
             Ebtn.Click += ExitButton_Click;
 
+            // PictureBox
+            pb = new PictureBox();
+            pb.Location = new Point(50, listView1.Location.Y + listView1.Height);
+            pb.Image = new Bitmap("../../../duck.png");
+            pb.Size = new Size(150, 150);
+            pb.SizeMode = PictureBoxSizeMode.Zoom;
+            pb.BorderStyle = BorderStyle.Fixed3D;
+
             this.Controls.Add(lbl);
             this.Controls.Add(btn1);
             this.Controls.Add(clearBtn);
@@ -127,6 +135,7 @@ namespace NaidisForm
             this.Controls.Add(txtK1);
             this.Controls.Add(txtK2);
             this.Controls.Add(btnAA);
+            this.Controls.Add(pb);
 
             this.BackColor = System.Drawing.Color.Turquoise;
         }
@@ -150,6 +159,7 @@ namespace NaidisForm
             AddListViewItem("Tüüp", triangle.CheckTriangleType());            
 
             double pointA, pointB, pointC;
+
             if (double.TryParse(txtA.Text, out pointA) && double.TryParse(txtB.Text, out pointB) && double.TryParse(txtC.Text, out pointC))
             {
                 if (pointA + pointB > pointC && pointA + pointC > pointB && pointB + pointC > pointA)
@@ -185,6 +195,28 @@ namespace NaidisForm
             {
                 MessageBox.Show("Palun sisestage õiged andmed kolmkurkadele");
             }
+
+            string triangleType = triangle.CheckTriangleType();
+
+            if (triangleType == "Võrdkülgne kolmnurk")
+            {
+                pb.Image = new Bitmap("../../../vordkylgnekolmnurk.jpg");
+                pb.Visible = true;
+            }
+            else if (triangleType == "Võrdhaarne täisnurkne kolmnurk")
+            {
+                pb.Image = new Bitmap("../../../vordhaarnetaisnurkekolmnurk.jpg");
+                pb.Visible = true;
+            }
+            else if (triangleType == "Skaleeni kolmnurk")
+            {
+                pb.Image = new Bitmap("../../../skaleenipng.png");
+                pb.Visible = true;
+            }
+            else
+            {
+                pb.Visible = false;
+            }
         }
 
         private void AddListViewItem(string attribute, string value)
@@ -209,9 +241,30 @@ namespace NaidisForm
         {
             double a, b, c;
 
-            a = Convert.ToDouble(txtK1.Text);
-            b = Convert.ToDouble(txtK2.Text);
-            c.GetKolm();
+            if (double.TryParse(txtK1.Text, out a) && double.TryParse(txtK2.Text, out b))
+            {
+                c = Math.Sqrt(a * a + b * b);
+
+                txtC.Text = c.ToString();
+
+                Triangle triangle = new Triangle(a, b, c);
+
+                if (triangle.ExistTriangle)
+                {
+                    double h = triangle.Height();
+                    double m = triangle.Median();
+
+                    MessageBox.Show($"C: {c}\nKõrgus: {h}\nMediaan: {m}", "Lahendus");
+                }
+                else
+                {
+                    MessageBox.Show("Valed kolmnurka küljed.", "Lahendus");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Palun sisestage õiged andmed külgedele A ja B", "Lahendus");
+            }
         }
     }
 }
