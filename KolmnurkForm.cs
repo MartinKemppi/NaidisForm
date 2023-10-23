@@ -13,7 +13,7 @@ namespace NaidisForm
     {
         Label lbl;
         ListView listView1;
-        TextBox txtA, txtB, txtC, txtK1, txtK2;
+        TextBox txtA, txtB, txtC, txtK1, txtK2, txtH;
         Button btn1, clearBtn, Ebtn, btnAA;
         PictureBox pictureBox1,pb;
         Graphics graphics;
@@ -123,6 +123,15 @@ namespace NaidisForm
             pb.SizeMode = PictureBoxSizeMode.Zoom;
             pb.BorderStyle = BorderStyle.Fixed3D;
 
+            // TextBox Height
+            txtH = new TextBox();
+            txtH.BorderStyle = BorderStyle.Fixed3D;
+            txtH.Height = 50;
+            txtH.Width = 200;
+            txtH.Location = new Point(50, txtC.Location.Y + txtC.Height);
+            txtH.PlaceholderText = "Kõrgus võrdküljele";
+            txtH.KeyDown += new KeyEventHandler(TxtH_Enter);
+
             this.Controls.Add(lbl);
             this.Controls.Add(btn1);
             this.Controls.Add(clearBtn);
@@ -136,6 +145,7 @@ namespace NaidisForm
             this.Controls.Add(txtK2);
             this.Controls.Add(btnAA);
             this.Controls.Add(pb);
+            this.Controls.Add(txtH);
 
             this.BackColor = System.Drawing.Color.Turquoise;
         }
@@ -264,6 +274,25 @@ namespace NaidisForm
             else
             {
                 MessageBox.Show("Palun sisestage õiged andmed külgedele A ja B", "Lahendus");
+            }
+        }
+        private void TxtH_Enter(object? sender, KeyEventArgs e)
+        {
+            double a, b, c;
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtA.Text = "";
+                txtB.Text = "";
+                txtC.Text = "";
+
+                double.TryParse(txtH.Text, out a);
+                double.TryParse(txtH.Text, out b);
+                double.TryParse(txtH.Text, out c);
+
+                txtA.Text = a.ToString();
+                txtB.Text = b.ToString();
+                txtC.Text = c.ToString();
             }
         }
     }
