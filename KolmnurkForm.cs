@@ -129,7 +129,7 @@ namespace NaidisForm
             txtH.Height = 50;
             txtH.Width = 200;
             txtH.Location = new Point(50, txtC.Location.Y + txtC.Height);
-            txtH.PlaceholderText = "Kõrgus võrdküljele";
+            txtH.PlaceholderText = "Üks külg - võrdküljele";
             txtH.KeyDown += new KeyEventHandler(TxtH_Enter);
 
             this.Controls.Add(lbl);
@@ -250,11 +250,16 @@ namespace NaidisForm
         private void ArvutaButton_Click(object sender, EventArgs e)
         {
             double a, b, c;
+            txtA.Text = "";
+            txtB.Text = "";
 
             if (double.TryParse(txtK1.Text, out a) && double.TryParse(txtK2.Text, out b))
             {
+                
                 c = Math.Sqrt(a * a + b * b);
 
+                txtA.Text = txtK1.Text;
+                txtB.Text = txtK2.Text;
                 txtC.Text = c.ToString();
 
                 Triangle triangle = new Triangle(a, b, c);
@@ -280,12 +285,12 @@ namespace NaidisForm
         {
             double a, b, c;
 
-            if (e.KeyCode == Keys.Enter)
-            {
-                txtA.Text = "";
-                txtB.Text = "";
-                txtC.Text = "";
+            txtA.Text = "";
+            txtB.Text = "";
+            txtC.Text = "";
 
+            if (e.KeyCode == Keys.Enter)
+            {                
                 double.TryParse(txtH.Text, out a);
                 double.TryParse(txtH.Text, out b);
                 double.TryParse(txtH.Text, out c);
